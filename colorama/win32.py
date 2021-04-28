@@ -1,4 +1,3 @@
-
 # from winbase.h
 STDOUT = -11
 STDERR = -12
@@ -9,9 +8,7 @@ except ImportError:
     windll = None
     SetConsoleTextAttribute = lambda *_: None
 else:
-    from ctypes import (
-        byref, Structure, c_char, c_short, c_uint32, c_ushort
-    )
+    from ctypes import byref, Structure, c_char, c_short, c_uint32, c_ushort
 
     handles = {
         STDOUT: windll.kernel32.GetStdHandle(STDOUT),
@@ -25,13 +22,15 @@ else:
 
     class COORD(Structure):
         """struct in wincon.h"""
+
         _fields_ = [
-            ('X', SHORT),
-            ('Y', SHORT),
+            ("X", SHORT),
+            ("Y", SHORT),
         ]
 
-    class  SMALL_RECT(Structure):
+    class SMALL_RECT(Structure):
         """struct in wincon.h."""
+
         _fields_ = [
             ("Left", SHORT),
             ("Top", SHORT),
@@ -41,6 +40,7 @@ else:
 
     class CONSOLE_SCREEN_BUFFER_INFO(Structure):
         """struct in wincon.h."""
+
         _fields_ = [
             ("dwSize", COORD),
             ("dwCursorPosition", COORD),
@@ -52,8 +52,7 @@ else:
     def GetConsoleScreenBufferInfo(stream_id):
         handle = handles[stream_id]
         csbi = CONSOLE_SCREEN_BUFFER_INFO()
-        success = windll.kernel32.GetConsoleScreenBufferInfo(
-            handle, byref(csbi))
+        success = windll.kernel32.GetConsoleScreenBufferInfo(handle, byref(csbi))
         # This fails when imported via setup.py when installing using 'pip'
         # presumably the fix is that running setup.py should not trigger all
         # this activity.
@@ -80,16 +79,16 @@ else:
         # AttributeError: function 'FillConsoleOutputCharacter' not found
         # could it just be that my types are wrong?
         success = windll.kernel32.FillConsoleOutputCharacter(
-            handle, char, length, start, byref(num_written))
+            handle, char, length, start, byref(num_written)
+        )
         assert success
         return num_written.value
 
 
-if __name__=='__main__':
+if __name__ == "__main__":
     x = GetConsoleScreenBufferInfo(STDOUT)
     print((x.dwSize))
     print((x.dwCursorPosition))
     print((x.wAttributes))
     print((x.srWindow))
     print((x.dwMaximumWindowSize))
-

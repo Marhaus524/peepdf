@@ -11,8 +11,10 @@ Licensed under the MIT license http://www.opensource.org/licenses/mit-license.ph
 """
 __author__ = "Adam Newman"
 
+
 class CBCMode:
     """Perform CBC operation on a block and retain IV information for next operation"""
+
     def __init__(self, block_cipher, block_size):
         self._block_cipher = block_cipher
         self._block_size = block_size
@@ -23,19 +25,25 @@ class CBCMode:
             self._iv = iv
 
     def encrypt_block(self, plaintext):
-        iv=self._iv=self._block_cipher.cipher_block([i ^ j for i,j in zip (plaintext, self._iv)])
+        iv = self._iv = self._block_cipher.cipher_block(
+            [i ^ j for i, j in zip(plaintext, self._iv)]
+        )
         return iv
 
     def decrypt_block(self, ciphertext):
         plaintext = list(self._block_cipher.decipher_block(ciphertext))
-        for i,v in enumerate(self._iv):plaintext[i]^=v
+        for i, v in enumerate(self._iv):
+            plaintext[i] ^= v
         self._iv = ciphertext
         return plaintext
 
+
 import unittest
+
+
 class TestEncryptionMode(unittest.TestCase):
     def test_mode(self):
-        #Self test
+        # Self test
         from . import key_expander
         from . import aes_cipher
         from . import test_keys
@@ -51,15 +59,38 @@ class TestEncryptionMode(unittest.TestCase):
 
         test_cbc.set_iv(test_data.test_mode_iv)
         for k in range(4):
-            self.assertEqual(len([i for i, j in zip(test_data.test_cbc_ciphertext[k],test_cbc.encrypt_block(test_data.test_mode_plaintext[k])) if i == j]),
+            self.assertEqual(
+                len(
+                    [
+                        i
+                        for i, j in zip(
+                            test_data.test_cbc_ciphertext[k],
+                            test_cbc.encrypt_block(test_data.test_mode_plaintext[k]),
+                        )
+                        if i == j
+                    ]
+                ),
                 16,
-                msg='CBC encrypt test block %d'%k)
+                msg="CBC encrypt test block %d" % k,
+            )
 
         test_cbc.set_iv(test_data.test_mode_iv)
         for k in range(4):
-            self.assertEqual(len([i for i, j in zip(test_data.test_mode_plaintext[k],test_cbc.decrypt_block(test_data.test_cbc_ciphertext[k])) if i == j]),
+            self.assertEqual(
+                len(
+                    [
+                        i
+                        for i, j in zip(
+                            test_data.test_mode_plaintext[k],
+                            test_cbc.decrypt_block(test_data.test_cbc_ciphertext[k]),
+                        )
+                        if i == j
+                    ]
+                ),
                 16,
-                msg='CBC decrypt test block %d'%k)
+                msg="CBC decrypt test block %d" % k,
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

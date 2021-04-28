@@ -1,29 +1,27 @@
-
 from . import win32
 
 
 # from wincon.h
 class WinColor(object):
-    BLACK   = 0
-    BLUE    = 1
-    GREEN   = 2
-    CYAN    = 3
-    RED     = 4
+    BLACK = 0
+    BLUE = 1
+    GREEN = 2
+    CYAN = 3
+    RED = 4
     MAGENTA = 5
-    YELLOW  = 6
-    GREY    = 7
+    YELLOW = 6
+    GREY = 7
+
 
 # from wincon.h
 class WinStyle(object):
-    NORMAL = 0x00 # dim text, dim background
-    BRIGHT = 0x08 # bright text, dim background
+    NORMAL = 0x00  # dim text, dim background
+    BRIGHT = 0x08  # bright text, dim background
 
 
 class WinTerm(object):
-
     def __init__(self):
-        self._default = \
-            win32.GetConsoleScreenBufferInfo(win32.STDOUT).wAttributes
+        self._default = win32.GetConsoleScreenBufferInfo(win32.STDOUT).wAttributes
         self.set_attrs(self._default)
         self._default_fore = self._fore
         self._default_back = self._back
@@ -66,4 +64,3 @@ class WinTerm(object):
         if on_stderr:
             handle = win32.STDERR
         win32.SetConsoleTextAttribute(handle, attrs)
-
